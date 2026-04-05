@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import "../styles/StrategySelection.css";
 
 export default function StrategySelection() {
   const navigate = useNavigate();
@@ -9,11 +10,15 @@ export default function StrategySelection() {
   };
 
   return (
-    <div style={styles.container}>
+    <div className="strategy-selection-page">
       <h1>Select AI Difficulty</h1>
-      <div style={styles.buttonGroup}>
-        <button onClick={() => handleChoice("minimax")}>Standard Minimax</button>
-        <button onClick={() => handleChoice("alphabeta")}>Optimized Alpha-Beta</button>
+      <div className="strategy-button-group">
+        <button className="strategy-btn" onClick={() => handleChoice("minimax")}>
+          Standard Minimax
+        </button>
+        <button className="strategy-btn" onClick={() => handleChoice("alphabeta")}>
+          Optimized Alpha-Beta
+        </button>
       </div>
     </div>
   );

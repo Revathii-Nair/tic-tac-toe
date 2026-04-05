@@ -4,6 +4,7 @@ import { getMinimaxMove, checkWinner, getWinningLine } from "../utils/minimax.js
 import { getAlphaBetaMove } from "../utils/alphabeta.jsx";
 import { useScores } from "../context/ScoreContext.jsx";
 import AlgoVisualizer from "../components/AlgoVisualizer.jsx";
+import "../styles/Game.css";
 
 const CONF_COLORS = ["#4f7fff", "#ff4d7d", "#00d4ff", "#ffd700", "#00e5a0", "#a78bfa"];
 
@@ -12,7 +13,7 @@ function Confetti() {
   return (
     <>
       {pieces.map((p) => (
-        <div key={p.id} className="confetti" style={{ left: p.left, background: p.color }} />
+        <div key={p.id} className="confetti-piece" style={{ left: p.left, background: p.color, animationDelay: `${Math.random() * 0.5}s` }} />
       ))}
     </>
   );
@@ -22,21 +23,12 @@ function Cell({ value, onClick, isWin }) {
   return (
     <div
       onClick={onClick}
+      className="game-cell"
       style={{
-        width: 100,
-        height: 100,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: 42,
-        fontWeight: 900,
         border: `1.5px solid ${isWin ? "var(--success)" : "var(--border-hi)"}`,
-        borderRadius: 10,
         cursor: value ? "default" : "pointer",
         color: value === "X" ? "var(--x-col)" : "var(--o-col)",
         background: isWin ? "color-mix(in srgb, var(--success) 10%, transparent)" : "var(--card)",
-        transition: "background 0.3s",
-        fontFamily: "Orbitron, monospace",
       }}
     >
       {value}
@@ -46,15 +38,15 @@ function Cell({ value, onClick, isWin }) {
 
 function ScoreBlock({ name, symbol, wins, losses, draws }) {
   return (
-    <div style={{ textAlign: "center", minWidth: 100 }}>
-      <div style={{ fontSize: "1.6rem", fontWeight: 900, fontFamily: "Orbitron, monospace", color: symbol === "X" ? "var(--x-col)" : "var(--o-col)" }}>{symbol}</div>
-      <div style={{ fontWeight: 700, color: "var(--text)", fontSize: "0.9rem" }}>{name}</div>
-      <div style={{ color: "var(--text2)", fontSize: "0.8rem", marginTop: 4 }}>
-        <span style={{ color: "var(--success)" }}>{wins}W</span>
-        {" · "}
-        <span style={{ color: "var(--danger)" }}>{losses}L</span>
-        {" · "}
-        <span style={{ color: "var(--muted)" }}>{draws}D</span>
+    <div className="score-block">
+      <div className="score-symbol" style={{ color: symbol === "X" ? "var(--x-col)" : "var(--o-col)" }}>
+        {symbol}
+      </div>
+      <div className="score-name">{name}</div>
+      <div className="score-stats">
+        <span className="stat-w">{wins}W</span> {" · "}
+        <span className="stat-l">{losses}L</span> {" · "}
+        <span className="stat-d">{draws}D</span>
       </div>
     </div>
   );
@@ -62,43 +54,16 @@ function ScoreBlock({ name, symbol, wins, losses, draws }) {
 
 function ResultOverlay({ emoji, message, isWin, onPlayAgain, onHome }) {
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 100 }}>
+    <div className="result-overlay-bg">
       {isWin && <Confetti />}
-      <div
-        style={{
-          background: "var(--card)",
-          border: "1px solid var(--border)",
-          padding: "36px 40px",
-          borderRadius: 16,
-          textAlign: "center",
-          display: "flex",
-          flexDirection: "column",
-          gap: 16,
-          minWidth: 260,
-        }}
-      >
+      <div className="result-overlay-box">
         <div style={{ fontSize: 52 }}>{emoji}</div>
         <h2 style={{ fontFamily: "Orbitron, monospace", fontSize: "1.4rem", color: "var(--text)", margin: 0 }}>{message}</h2>
         <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
-          <button
-            onClick={onPlayAgain}
-            style={{ background: "var(--accent)", color: "#fff", border: "none", borderRadius: 30, padding: "10px 24px", fontWeight: 700, cursor: "pointer", fontSize: "0.9rem" }}
-          >
+          <button onClick={onPlayAgain} className="game-btn-primary">
             Play Again
           </button>
-          <button
-            onClick={onHome}
-            style={{
-              background: "var(--card)",
-              color: "var(--text)",
-              border: "1px solid var(--border)",
-              borderRadius: 30,
-              padding: "10px 24px",
-              fontWeight: 700,
-              cursor: "pointer",
-              fontSize: "0.9rem",
-            }}
-          >
+          <button onClick={onHome} className="game-btn-secondary">
             Home
           </button>
         </div>
@@ -213,56 +178,26 @@ export default function Game() {
   const p2 = isAi ? scores.ai : scores.player2;
 
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-        maxWidth: showVisualizer ? "1400px" : "800px",
-        margin: "0 auto",
-        height: "calc(100vh - 68px)",
-        gap: 40,
-        padding: "20px",
-        transition: "max-width 0.6s ease",
-        overflow: "hidden",
-      }}
-    >
-      {/* Left Side: Game Board */}
-      <div style={{ flex: "1", minWidth: "350px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+    <div className="game-layout" style={{ maxWidth: showVisualizer ? "1400px" : "800px" }}>
+      <div className="game-board-container">
         {over && <ResultOverlay emoji={resultEmoji} message={resultMsg} isWin={isWin} onPlayAgain={resetGame} onHome={() => navigate("/")} />}
 
-        <div style={{ display: "flex", justifyContent: "center", gap: 40, marginBottom: 16 }}>
+        <div className="score-row">
           <ScoreBlock name="Player 1" symbol="X" {...p1} />
           <ScoreBlock name={isAi ? "AI" : "Player 2"} symbol="O" {...p2} />
         </div>
 
-        <h4 style={{ color: "var(--text2)", fontFamily: "Orbitron, monospace", fontSize: "0.9rem", marginBottom: 20 }}>
-          {aiThinking ? "🤖 AI Thinking..." : `${turn === "X" ? "Player 1" : isAi ? "AI" : "Player 2"}'s Turn`}
-        </h4>
+        <h4 className="turn-heading">{aiThinking ? "🤖 AI Thinking..." : `${turn === "X" ? "Player 1" : isAi ? "AI" : "Player 2"}'s Turn`}</h4>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 100px)", gap: 10, justifyContent: "center" }}>
+        <div className="game-grid">
           {board.map((cell, i) => (
             <Cell key={i} value={cell} onClick={() => handleClick(i)} isWin={winLine.includes(i)} />
           ))}
         </div>
 
-        <div style={{ height: "76px", width: "100%", maxWidth: "320px", marginTop: "20px" }}>
+        <div className="ai-stats-wrapper">
           {isAi && aiStats.visited > 0 && (
-            <div
-              style={{
-                height: "100%",
-                padding: "12px 20px",
-                background: "var(--card)",
-                borderRadius: "10px",
-                border: "1px solid var(--border)",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                gap: "8px",
-                fontSize: "0.85rem",
-              }}
-            >
+            <div className="ai-stats-box">
               <div>
                 Nodes Checked: <strong style={{ color: "var(--text)" }}>{aiStats.visited}</strong>
               </div>
@@ -275,31 +210,19 @@ export default function Game() {
           )}
         </div>
 
-        <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 20, flexWrap: "wrap" }}>
-          <button onClick={resetGame} style={{ background: "var(--accent)", color: "#fff", border: "none", borderRadius: 30, padding: "10px 24px", fontWeight: 700, cursor: "pointer" }}>
+        <div className="game-buttons-row">
+          <button onClick={resetGame} className="game-btn-primary">
             Reset
           </button>
-          <button
-            onClick={() => navigate("/")}
-            style={{ background: "var(--card)", color: "var(--text)", border: "1px solid var(--border)", borderRadius: 30, padding: "10px 24px", fontWeight: 700, cursor: "pointer" }}
-          >
+          <button onClick={() => navigate("/")} className="game-btn-secondary">
             Home
           </button>
 
           {isAi && (
             <button
               onClick={() => setShowVisualizer(!showVisualizer)}
-              style={{
-                background: showVisualizer ? "var(--border)" : "var(--card)",
-                color: "var(--text)",
-                border: "1px solid var(--border)",
-                borderRadius: 30,
-                padding: "10px 24px",
-                fontWeight: 700,
-                cursor: "pointer",
-                width: "100%",
-                marginTop: "5px",
-              }}
+              className="game-btn-secondary"
+              style={{ background: showVisualizer ? "var(--border)" : "var(--card)", width: "100%", marginTop: "5px" }}
             >
               {showVisualizer ? "Hide Algo Working" : "Show Algo Working"}
             </button>
@@ -307,9 +230,8 @@ export default function Game() {
         </div>
       </div>
 
-      {/* Right Side:  Visualizer */}
       {isAi && showVisualizer && (
-        <div style={{ flex: "1", minWidth: "690px" }}>
+        <div className="game-visualizer-container">
           <AlgoVisualizer traceData={traceLogs} />
         </div>
       )}

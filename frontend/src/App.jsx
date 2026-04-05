@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ScoreProvider } from "./context/ScoreContext.jsx";
 
-// Pages
 import LandingPage from "./pages/LandingPage.jsx";
 import Home from "./pages/Home.jsx";
 import GridSelect from "./pages/GridSelect.jsx";

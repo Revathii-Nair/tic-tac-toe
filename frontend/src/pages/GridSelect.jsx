@@ -1,5 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useScores } from "../context/ScoreContext.jsx";
+import DecorBoard from "../components/DecorBoard.jsx";
+import Stat from "../components/Stat.jsx";
+import "../styles/GridSelect.css";
+import "../styles/Home.css"; // Preserved so the DecorBoard class logic works
 
 const GRIDS = [{ size: 3, label: "3 × 3", winMsg: "3 in a row to win", desc: "Classic Tic Tac Toe.", badge: "Classic", accent: "var(--success)", glow: "rgba(0,229,160,0.30)", icon: "⚡" }];
 
@@ -9,58 +14,23 @@ const AI_STRATEGIES = [
 ];
 
 function StrategyCard({ s, onClick }) {
-  const [hover, setHover] = useState(false);
-
   return (
-    <div
-      onClick={onClick}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        background: "var(--card)",
-        border: `1px solid ${hover ? s.accent : "var(--border)"}`,
-        borderRadius: 16,
-        padding: 24,
-        width: 240,
-        textAlign: "center",
-        cursor: "pointer",
-        transform: hover ? "scale(1.05)" : "scale(1)",
-        transition: "0.3s",
-        boxShadow: hover ? `0 10px 30px ${s.glow}` : "none",
-      }}
-    >
-      <div style={{ fontSize: "2.5rem" }}>{s.icon}</div>
-      <h3>{s.label}</h3>
-      <p style={{ fontSize: "0.85rem", color: "var(--text2)" }}>{s.desc}</p>
-      <div style={{ color: s.accent, fontWeight: "bold" }}>{s.tag}</div>
+    <div onClick={onClick} className="selection-card" style={{ "--card-accent": s.accent, "--card-glow": s.glow }}>
+      <div className="selection-icon">{s.icon}</div>
+      <h3 className="selection-title">{s.label}</h3>
+      <p className="selection-desc">{s.desc}</p>
+      <div className="selection-tag">{s.tag}</div>
     </div>
   );
 }
 
 function GridCard({ g, onClick }) {
-  const [hover, setHover] = useState(false);
-
   return (
-    <div
-      onClick={onClick}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        background: "var(--card)",
-        border: `1px solid ${hover ? g.accent : "var(--border)"}`,
-        borderRadius: 16,
-        padding: 20,
-        width: 200,
-        textAlign: "center",
-        cursor: "pointer",
-        transform: hover ? "scale(1.05)" : "scale(1)",
-        transition: "0.3s",
-      }}
-    >
-      <div style={{ fontSize: "2rem" }}>{g.icon}</div>
-      <h3>{g.label}</h3>
-      <p style={{ fontSize: "0.8rem", color: "var(--text2)" }}>{g.desc}</p>
-      <div style={{ color: g.accent, fontWeight: "bold" }}>{g.winMsg}</div>
+    <div onClick={onClick} className="selection-card" style={{ "--card-accent": g.accent, "--card-glow": g.glow || "var(--accent-glow)" }}>
+      <div className="selection-icon">{g.icon}</div>
+      <h3 className="selection-title">{g.label}</h3>
+      <p className="selection-desc">{g.desc}</p>
+      <div className="selection-tag">{g.winMsg}</div>
     </div>
   );
 }
@@ -68,42 +38,75 @@ function GridCard({ g, onClick }) {
 export default function GridSelect() {
   const { mode } = useParams();
   const navigate = useNavigate();
+  const { scores, resetScores } = useScores();
 
   const isAi = mode === "ai";
 
-  // AI mode navigation
+  // Stats logic
+  const p1 = scores.player1;
+  const totalGames = p1.wins + p1.losses + p1.draws;
+
   const handleStrategyPick = (engine) => {
     navigate(`/game/ai?engine=${engine}`);
   };
 
-  // Friend mode navigation
   const handleGridPick = (size) => {
     navigate(`/game/${mode}/${size}`);
   };
 
   return (
-    <div className="page" style={{ textAlign: "center", gap: 30 }}>
-      {isAi ? (
-        <>
-          <h1 style={{ fontFamily: "Orbitron, monospace" }}>Choose AI Engine</h1>
-          <p style={{ color: "var(--text2)" }}>Select how smart your opponent should be</p>
+    <div className="page grid-select-page">
+      {/* Top Section with Decor Board */}
+      <div className="home-page" style={{ animation: "fadeUp 0.5s ease both" }}>
+        <DecorBoard />
+        {isAi ? (
+          <>
+            <h1 className="grid-select-title" style={{ marginTop: "14px" }}>
+              Choose AI Engine
+            </h1>
+            <p className="grid-select-subtitle">Select how smart your opponent should be</p>
+          </>
+        ) : (
+          <>
+            <h1 className="grid-select-title" style={{ marginTop: "14px" }}>
+              Select Grid Size
+            </h1>
+            <p className="grid-select-subtitle">Choose your battlefield</p>
+          </>
+        )}
+      </div>
 
-          <div style={{ display: "flex", gap: 20, justifyContent: "center", flexWrap: "wrap" }}>
-            {AI_STRATEGIES.map((s) => (
-              <StrategyCard key={s.engine} s={s} onClick={() => handleStrategyPick(s.engine)} />
-            ))}
-          </div>
-        </>
-      ) : (
-        <>
-          <h1 style={{ fontFamily: "Orbitron, monospace" }}>Select Grid Size</h1>
+      {/* Grid / Strategy Cards */}
+      <div className="grid-select-container">
+        {isAi
+          ? AI_STRATEGIES.map((s) => <StrategyCard key={s.engine} s={s} onClick={() => handleStrategyPick(s.engine)} />)
+          : GRIDS.map((g) => <GridCard key={g.size} g={g} onClick={() => handleGridPick(g.size)} />)}
+      </div>
 
-          <div style={{ display: "flex", gap: 20, justifyContent: "center", marginTop: 30 }}>
-            {GRIDS.map((g) => (
-              <GridCard key={g.size} g={g} onClick={() => handleGridPick(g.size)} />
-            ))}
+      {/* Bottom Section with Scoreboard */}
+      {totalGames > 0 && (
+        <div
+          style={{
+            background: "var(--card)",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--radius-m)",
+            padding: "22px 32px",
+            textAlign: "center",
+            animation: "fadeUp 0.5s ease 0.5s both",
+            marginTop: 30,
+          }}
+        >
+          <div style={{ fontSize: "0.72rem", color: "var(--muted)", letterSpacing: "2px", textTransform: "uppercase", fontWeight: 700, marginBottom: 16 }}>Your Stats (Player 1)</div>
+          <div style={{ display: "flex", gap: 28, justifyContent: "center", flexWrap: "wrap" }}>
+            <Stat label="Wins" val={p1.wins} col="var(--success)" />
+            <Stat label="Losses" val={p1.losses} col="var(--danger)" />
+            <Stat label="Draws" val={p1.draws} col="var(--muted)" />
+            <Stat label="Played" val={totalGames} col="var(--accent)" />
           </div>
-        </>
+          <button className="btn btn-outline btn-sm" onClick={resetScores} style={{ marginTop: 16 }}>
+            Reset Scores
+          </button>
+        </div>
       )}
     </div>
   );
