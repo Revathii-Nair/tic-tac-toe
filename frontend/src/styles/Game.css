@@ -82,7 +82,7 @@
 }
 
 .ai-stats-wrapper {
-  height: 76px;
+  height: 86px;
   width: 100%;
   max-width: 320px;
   margin-top: 20px;
@@ -98,7 +98,7 @@
   flex-direction: column;
   justify-content: center;
   gap: 8px;
-  font-size: 0.85rem;
+  font-size: 1.1rem;
 }
 
 .game-buttons-row {
