@@ -1,83 +1,75 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Score = require('../models/Score');
+const fs = require("fs").promises;
+const path = require("path");
 
-/* GET /api/scores — get all scores sorted by wins */
-router.get('/', async (_req, res) => {
+// Define the absolute path to our JSON database
+const dataPath = path.join(__dirname, "../data/scores.json");
+
+// --- Helper Functions ---
+async function readScores() {
   try {
-    const data = await Score.find().sort({ wins: -1 });
-    res.json({ success: true, data });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    const data = await fs.readFile(dataPath, "utf8");
+    return JSON.parse(data);
+  } catch (error) {
+    console.error("Error reading scores.json:", error);
+    // Fallback if file is missing or corrupted
+    return { player1: { wins: 0, losses: 0, draws: 0 }, player2: { wins: 0, losses: 0, draws: 0 }, ai: { wins: 0, losses: 0, draws: 0 } };
+  }
+}
+
+async function writeScores(scores) {
+  try {
+    await fs.writeFile(dataPath, JSON.stringify(scores, null, 2), "utf8");
+  } catch (error) {
+    console.error("Error writing to scores.json:", error);
+  }
+}
+// ------------------------
+
+// @route   GET /api/scores
+// @desc    Get all scores
+router.get("/", async (req, res) => {
+  try {
+    const scores = await readScores();
+    res.json(scores);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
-/* GET /api/scores/player/:name — get scores for a specific player */
-router.get('/player/:name', async (req, res) => {
-  try {
-    const data = await Score.find({ playerName: req.params.name });
-    res.json({ success: true, data });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
+// @route   PUT /api/scores/update
+// @desc    Increment a specific stat for a player
+router.put("/update", async (req, res) => {
+  const { player, stat } = req.body;
 
-/* GET /api/scores/leaderboard/:gameMode — top 10 for ai or friend mode */
-router.get('/leaderboard/:gameMode', async (req, res) => {
   try {
-    const data = await Score.find({ gameMode: req.params.gameMode, gridSize: 3 })
-      .sort({ wins: -1 })
-      .limit(10);
-    res.json({ success: true, data });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
+    const scores = await readScores();
 
-/* POST /api/scores/update — save a game result
-   Body: { playerName, result ('win'|'loss'|'draw'), gameMode ('ai'|'friend') } */
-router.post('/update', async (req, res) => {
-  try {
-    const { playerName, result, gameMode } = req.body;
+    // Ensure the requested player and stat exist in our JSON
+    if (scores[player] && scores[player][stat] !== undefined) {
+      scores[player][stat] += 1; // Increment the stat
 
-    // Validate required fields
-    if (!playerName || !result || !gameMode) {
-      return res.status(400).json({
-        success: false,
-        error: 'playerName, result, and gameMode are required',
-      });
+      await writeScores(scores); // Save the file
+      res.json(scores); // Send back the updated data
+    } else {
+      res.status(400).json({ message: "Invalid player or stat provided" });
     }
-
-    if (!['win', 'loss', 'draw'].includes(result)) {
-      return res.status(400).json({
-        success: false,
-        error: 'result must be win, loss, or draw',
-      });
-    }
-
-    // Map result to the correct field name
-    const field = result === 'win' ? 'wins' : result === 'loss' ? 'losses' : 'draws';
-
-    // Find existing record or create a new one (upsert)
-    const score = await Score.findOneAndUpdate(
-      { playerName, gameMode, gridSize: 3 }, // always 3x3
-      { $inc: { [field]: 1 } },
-      { new: true, upsert: true }
-    );
-
-    res.json({ success: true, data: score });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
-/* DELETE /api/scores/reset/:name — delete all scores for a player */
-router.delete('/reset/:name', async (req, res) => {
+// @route   POST /api/scores/reset
+// @desc    Reset all scores back to 0
+router.post("/reset", async (req, res) => {
   try {
-    await Score.deleteMany({ playerName: req.params.name });
-    res.json({ success: true, message: 'Scores reset' });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    const defaultScores = { player1: { wins: 0, losses: 0, draws: 0 }, player2: { wins: 0, losses: 0, draws: 0 }, ai: { wins: 0, losses: 0, draws: 0 } };
+
+    await writeScores(defaultScores);
+    res.json(defaultScores);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
   }
 });
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { getMinimaxMove, checkWinner, getWinningLine } from "../utils/minimax.jsx";
 import { getAlphaBetaMove } from "../utils/alphabeta.jsx";
@@ -95,15 +95,13 @@ export default function Game() {
   const [traceLogs, setTraceLogs] = useState([]);
   const [aiStats, setAiStats] = useState({ visited: 0, pruned: 0 });
 
-  const scoreRecorded = useRef(false);
-
   useEffect(() => {
-    if (scoreRecorded.current) return;
+    if (over) return;
+
     const result = checkWinner(board);
     if (!result) return;
 
     setOver(true);
-    scoreRecorded.current = true;
     setWinLine(getWinningLine(board) || []);
 
     if (result === "X") {
@@ -128,7 +126,7 @@ export default function Game() {
       if (isAi) updateScore("ai", "draws");
       else updateScore("player2", "draws");
     }
-  }, [board]);
+  }, [board, over]);
 
   useEffect(() => {
     if (!isAi || turn !== "O" || over) return;
@@ -169,7 +167,6 @@ export default function Game() {
     setResultEmoji("");
     setIsWin(false);
     setAiThinking(false);
-    scoreRecorded.current = false;
     setTraceLogs([]);
     setAiStats({ visited: 0, pruned: 0 });
   }

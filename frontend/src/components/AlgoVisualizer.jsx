@@ -1,14 +1,7 @@
-import React, { useEffect, useRef } from "react";
-import "../styles/Game.css"; // Added import so the visualizer picks up the styles
+import React from "react";
+import "../styles/Game.css";
 
 export default function AlgoVisualizer({ traceData }) {
-  const endRef = useRef(null);
-
-  useEffect(() => {
-    if (endRef.current) endRef.current.scrollIntoView({ behavior: "smooth" });
-  }, [traceData]);
-
-  // Maps the text content to the new CSS classes for coloring
   const getLogClass = (line) => {
     if (line.includes("✂️")) return "log-pruned";
     if (line.includes("✅")) return "log-success";
@@ -23,12 +16,13 @@ export default function AlgoVisualizer({ traceData }) {
           <div className="visualizer-empty">Play a move to see the algorithm working!</div>
         ) : (
           traceData.map((line, i) => (
-            <div key={i} className={`visualizer-line ${getLogClass(line)}`}>
-              {line}
-            </div>
+            <div
+              key={i}
+              className={`visualizer-line ${getLogClass(line)}`}
+              dangerouslySetInnerHTML={{ __html: line }} // Keeps your Red X and Blue O working!
+            />
           ))
         )}
-        <div ref={endRef} />
       </div>
     </div>
   );
