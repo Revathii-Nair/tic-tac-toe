@@ -4,7 +4,7 @@ import { useScores } from "../context/ScoreContext.jsx";
 import DecorBoard from "../components/DecorBoard.jsx";
 import Stat from "../components/Stat.jsx";
 import "../styles/GridSelect.css";
-import "../styles/Home.css"; // Preserved so the DecorBoard class logic works
+import "../styles/Home.css";
 
 const GRIDS = [{ size: 3, label: "3 × 3", winMsg: "3 in a row to win", desc: "Classic Tic Tac Toe.", badge: "Classic", accent: "var(--success)", glow: "rgba(0,229,160,0.30)", icon: "⚡" }];
 

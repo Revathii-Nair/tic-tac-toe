@@ -1,3 +1,5 @@
+/* frontend/src/styles/Game.css */
+
 .game-layout {
   display: flex;
   align-items: center;
@@ -160,4 +162,51 @@
   to {
     transform: translateY(100vh) rotate(720deg);
   }
+}
+
+.visualizer-container {
+  height: 550px;
+  background-color: var(--card);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.visualizer-header {
+  background: var(--border);
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.visualizer-content {
+  padding: 15px;
+  overflow-y: auto;
+  flex: 1;
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+.visualizer-empty {
+  color: var(--text2);
+  text-align: center;
+  margin-top: 20px;
+}
+
+.visualizer-line {
+  margin-bottom: 4px;
+}
+
+/* Dynamic log colors based on JS logic */
+.log-pruned {
+  color: var(--danger);
+}
+
+.log-success {
+  color: var(--success);
+}
+
+.log-normal {
+  color: var(--text);
 }
