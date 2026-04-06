@@ -28,10 +28,29 @@ export function getWinningLine(board) {
 }
 
 export function getMinimaxMove(board) {
-  let traceLogs = ["🤔 AI is using MINIMAX ALGORITHM..."];
+  let traceLogs = ["AI is using MINIMAX ALGORITHM..."];
   let bestScore = -Infinity;
   let move = -1;
   let nodesVisited = 0;
+
+  for (let i = 0; i < 9; i++) {
+    if (!board[i]) {
+      board[i] = "O";
+
+      traceLogs.push(`\n'O' AI tests playing ${POS[i]} as its first move...`);
+
+      let score = minimax(board, 1, false);
+      board[i] = null;
+
+      if (score > bestScore) {
+        bestScore = score;
+        move = i;
+      }
+    }
+  }
+
+  traceLogs.push(`\n✅ AI selects ${POS[move]}!`);
+  return { bestMove: move, traceLogs, nodesVisited, nodesPruned: 0 };
 
   function minimax(currBoard, depth, isMaximizing) {
     nodesVisited++;
@@ -53,10 +72,8 @@ export function getMinimaxMove(board) {
           let score = minimax(currBoard, depth + 1, false);
           currBoard[i] = null;
 
-          if (depth < 5) {
-            const desc = score === 1 ? "AI WIN (+1)" : score === -1 ? "HUMAN WIN (-1)" : "DRAW (0)";
-            traceLogs.push(`${indent}  ↳ Result: ${desc}`);
-          }
+          const desc = score === 1 ? "AI WIN (+1)" : score === -1 ? "HUMAN WIN (-1)" : "DRAW (0)";
+          traceLogs.push(`${indent}  ↳ Result: ${desc}`);
 
           maxEval = Math.max(maxEval, score);
         }
@@ -78,23 +95,4 @@ export function getMinimaxMove(board) {
       return minEval;
     }
   }
-
-  for (let i = 0; i < 9; i++) {
-    if (!board[i]) {
-      board[i] = "O";
-
-      traceLogs.push(`\n🤖 AI tests playing ${POS[i]} as its first move...`);
-
-      let score = minimax(board, 1, false);
-      board[i] = null;
-
-      if (score > bestScore) {
-        bestScore = score;
-        move = i;
-      }
-    }
-  }
-
-  traceLogs.push(`\n✅ AI selects ${POS[move]}!`);
-  return { bestMove: move, traceLogs, nodesVisited, nodesPruned: 0 };
 }

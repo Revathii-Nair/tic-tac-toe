@@ -1,7 +1,7 @@
 import { checkWinner, POS } from "./minimax.jsx";
 
 export function getAlphaBetaMove(board) {
-  let traceLogs = ["🤔 AI is using ALPHA-BETA PRUNING..."];
+  let traceLogs = ["AI is using ALPHA-BETA PRUNING..."];
   let bestScore = -Infinity;
   let move = -1;
   let topAlpha = -Infinity;
@@ -29,10 +29,8 @@ export function getAlphaBetaMove(board) {
           let score = alphabeta(currBoard, depth + 1, alpha, beta, false);
           currBoard[i] = null;
 
-          if (depth < 5) {
-            const desc = score === 1 ? "AI WIN (+1)" : score === -1 ? "HUMAN WIN (-1)" : "DRAW (0)";
-            traceLogs.push(`${indent}  ↳ Result: ${desc}`);
-          }
+          const desc = score === 1 ? "AI WIN (+1)" : score === -1 ? "HUMAN WIN (-1)" : "DRAW (0)";
+          traceLogs.push(`${indent}  ↳ Result: ${desc}`);
 
           maxEval = Math.max(maxEval, score);
           alpha = Math.max(alpha, score);
@@ -72,7 +70,7 @@ export function getAlphaBetaMove(board) {
   for (let i = 0; i < 9; i++) {
     if (!board[i]) {
       board[i] = "O";
-      traceLogs.push(`\n🤖 AI tests playing ${POS[i]} as its first move...`);
+      traceLogs.push(`\n'O' AI tests playing ${POS[i]} as its first move...`);
 
       let score = alphabeta(board, 1, topAlpha, topBeta, false);
       board[i] = null;

@@ -1,5 +1,3 @@
-/* frontend/src/styles/Game.css */
-
 .game-layout {
   display: flex;
   align-items: center;
@@ -198,9 +196,16 @@
   margin-bottom: 4px;
 }
 
-/* Dynamic log colors based on JS logic */
 .log-pruned {
   color: var(--danger);
+}
+.log-imagines {
+  color: var(--cyan);
+}
+
+.log-result {
+  color: #a78bfa;
+  font-style: italic;
 }
 
 .log-success {
