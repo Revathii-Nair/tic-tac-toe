@@ -28,6 +28,20 @@ export default function LandingPage() {
           <p className="landing-engine-desc">At the heart of Tic Tac Pro lies a decision-making engine using industry-standard adversarial search.</p>
         </div>
 
+        <div className="landing-grid-container">
+          <p className="landing-debug-text">AI_ENGINE: EVALUATING_TREE...</p>
+          <div className="landing-grid">
+            {Array(9)
+              .fill(null)
+              .map((_, i) => (
+                <div key={i} className="landing-cell">
+                  {/* We keep the animationDelay inline because it is a dynamic loop variable */}
+                  <div className="landing-scanner" style={{ animationDelay: `${i * 0.1}s` }}></div>
+                </div>
+              ))}
+          </div>
+        </div>
+
         <div className="landing-info-section">
           <div class="landing-card">
             <div class="landing-card-header">
@@ -102,20 +116,6 @@ export default function LandingPage() {
               possibilities.
             </p>
           </div>
-        </div>
-      </div>
-
-      <div className="landing-grid-container">
-        <p className="landing-debug-text">AI_ENGINE: EVALUATING_TREE...</p>
-        <div className="landing-grid">
-          {Array(9)
-            .fill(null)
-            .map((_, i) => (
-              <div key={i} className="landing-cell">
-                {/* We keep the animationDelay inline because it is a dynamic loop variable */}
-                <div className="landing-scanner" style={{ animationDelay: `${i * 0.1}s` }}></div>
-              </div>
-            ))}
         </div>
       </div>
     </div>
