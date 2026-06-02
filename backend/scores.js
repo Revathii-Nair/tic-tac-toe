@@ -1,26 +1,28 @@
 const express = require("express");
 const router = express.Router();
-const fs = require("fs").promises;
-const path = require("path");
+const { get, set } = require("@vercel/edge-config");
 
-const dataPath = path.join(__dirname, "../data/scores.json");
+const defaultScores = {
+  player1: { wins: 0, losses: 0, draws: 0 },
+  player2: { wins: 0, losses: 0, draws: 0 },
+  ai: { wins: 0, losses: 0, draws: 0 },
+};
 
 async function readScores() {
   try {
-    const data = await fs.readFile(dataPath, "utf8");
-    return JSON.parse(data);
+    const scores = await get("scores");
+    return scores || defaultScores;
   } catch (error) {
-    console.error("Error reading scores.json:", error);
-
-    return { player1: { wins: 0, losses: 0, draws: 0 }, player2: { wins: 0, losses: 0, draws: 0 }, ai: { wins: 0, losses: 0, draws: 0 } };
+    console.error("Error reading scores from Edge config:", error);
+    return defaultScores;
   }
 }
 
 async function writeScores(scores) {
   try {
-    await fs.writeFile(dataPath, JSON.stringify(scores, null, 2), "utf8");
+    await set("scores", scores);
   } catch (error) {
-    console.error("Error writing to scores.json:", error);
+    console.error("Error writing to Edge config:", error);
   }
 }
 
@@ -54,8 +56,6 @@ router.put("/update", async (req, res) => {
 
 router.post("/reset", async (req, res) => {
   try {
-    const defaultScores = { player1: { wins: 0, losses: 0, draws: 0 }, player2: { wins: 0, losses: 0, draws: 0 }, ai: { wins: 0, losses: 0, draws: 0 } };
-
     await writeScores(defaultScores);
     res.json(defaultScores);
   } catch (error) {
