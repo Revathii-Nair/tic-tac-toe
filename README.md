@@ -2,7 +2,7 @@
 
 This is a full-stack web application designed to demonstrate and compare how search algorithms function. By playing Tic Tac Toe, you can observe the real-time performance of **Minimax** and **Alpha-Beta Pruning**.
 
-## Live Demo - [Click here to try it out now.](https://tic-tac-toe-frontend-swart.vercel.app/home)
+## Live Demo - [Click here to try it out now.](https://tic-tac-toe-frontend-swart.vercel.app)
 
 ## Project Objective
 
