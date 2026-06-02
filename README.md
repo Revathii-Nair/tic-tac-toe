@@ -2,7 +2,7 @@
 
 This is a full-stack web application designed to demonstrate and compare how search algorithms function. By playing Tic Tac Toe, you can observe the real-time performance of **Minimax** and **Alpha-Beta Pruning**.
 
----
+## Live Demo - [Click here to try it out now.](https://try-tic-tac-toe-sigma.vercel.app/)
 
 ## Project Objective
 
@@ -10,24 +10,24 @@ The goal of this project is to visualize adversarial search. It provides a pract
 
 ### Minimax Algorithm
 
-- **Exhaustive Search:** The AI explores every possible future move to ensure it plays perfectly.
-- **Recursive Evaluation:** It builds a complete game tree and assigns scores to every outcome.
-- **Performance:** While highly accurate, it becomes computationally "expensive" as the board size grows because it never skips a branch.
+- Explores all possible moves for perfect play.
+- Builds a full game tree recursively with scores.
+- Accurate but costly as board size grows.
 
 ### Alpha-Beta Pruning
 
-- **Optimized Search:** This is an enhanced version of Minimax that significantly improves speed.
-- **Pruning Logic:** The AI stops evaluating a branch as soon as it determines that the move cannot possibly be better than a previously examined option.
-- **Identical Accuracy:** It achieves the same perfect result as Minimax but with much less processing power.
+- Optimized: Skips branches that can’t improve results.
+- Efficient: Same accuracy as Minimax with fewer evaluations.
+- Faster: Reduces processing power needed.
 
 ---
 
 ## AI Performance Metrics
 
-This application tracks and displays specific data points to show the efficiency of each algorithm:
+This application tracks and displays the following metrics to show the efficiency of each algorithm:
 
-- **Nodes Visited:** A live counter showing the total number of board states the AI analyzed. This reveals the computational load of the search.
-- **Branches Pruned:** A metric specifically for Alpha-Beta that counts how many potential moves were skipped to save time.
+- **Nodes Visited:** A live counter showing the total number of board states the AI analyzed. This highlights how much the AI processed.
+- **Branches Pruned:** A metric for Alpha-Beta that counts how many potential moves were skipped to save time.
 - **Algorithm Visualizer:** A real-time console that logs heuristic scores and decision paths as the AI "thinks."
 
 ---
@@ -36,7 +36,7 @@ This application tracks and displays specific data points to show the efficiency
 
 - **Frontend:** React (Vite), Tailwind CSS, Framer Motion.
 - **Backend:** Node.js, Express.js.
-- **Database:** Simple JSON storage for score tracking and game history.
+- **Database:** Vercel Edge Config for persistent score tracking.
 - **Logic:** Custom recursive implementations of search algorithms in JavaScript.
 
 ---
@@ -44,7 +44,7 @@ This application tracks and displays specific data points to show the efficiency
 ## Project Structure
 
 ```text
-tic-tac-toe-mern/
+AI-Search-Tree-Visualizer/
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
@@ -54,43 +54,13 @@ tic-tac-toe-mern/
 │   │   │   └── alphabeta.jsx       # Logic + Pruning counter
 │   │   └── pages/
 └── backend/
-    └── routes/
-        └── scores.js               # API for persistent leaderboards
+    └─ scores.js               # API for persistent leaderboards
 
 ```
 
 ---
 
-## Installation
-
-1. **Clone the Repository**
-
-```bash
-git clone https://github.com/revathii-nair/tic-tac-toe.git
-cd tic-tac-toe
-
-```
-
-2. **Backend Setup**
-
-```bash
-cd backend
-npm install
-npm start
-
-```
-
-3. **Frontend Setup**
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
----
-
-## Usage for Analysis
+## How to Explore
 
 1. Launch the app and navigate to **Single Player**.
 2. Select **Minimax** and play; check the **Nodes Visited** in the sidebar.
