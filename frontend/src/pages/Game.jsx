@@ -182,7 +182,7 @@ export default function Game() {
   return (
     <div className="game-layout" style={{ maxWidth: showVisualizer ? "1400px" : "800px" }}>
       <div className="game-board-container">
-        {over && <ResultOverlay emoji={resultEmoji} message={resultMsg} isWin={isWin} onPlayAgain={resetGame} onHome={() => navigate("/")} />}
+        {over && <ResultOverlay emoji={resultEmoji} message={resultMsg} isWin={isWin} onPlayAgain={resetGame} onHome={() => navigate("/home")} />}
 
         <div className="score-row">
           <ScoreBlock name="Player 1" symbol="X" {...p1} />
@@ -216,7 +216,7 @@ export default function Game() {
           <button onClick={resetGame} className="game-btn-primary">
             Reset
           </button>
-          <button onClick={() => navigate("/")} className="game-btn-secondary">
+          <button onClick={() => navigate("/home")} className="game-btn-secondary">
             Home
           </button>
 
