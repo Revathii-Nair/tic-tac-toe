@@ -1,7 +1,7 @@
 import React from "react";
 import ComputerIcon from "../assets/robotIcon.svg";
 import FriendIcon from "../assets/friendIcon.svg";
-import TreeIcon from "../assets/treeIcon.svg";
+import TreeIcon from "../assets/TreeIcon.svg";
 import ThunderIcon from "../assets/thunderIcon.svg";
 import ConsoleIcon from "../assets/consoleIcon.svg";
 
